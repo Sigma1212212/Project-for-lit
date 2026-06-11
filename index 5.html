@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Book Thief — Casting Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEMES — "archive" = 1942 film look | "modern" = sleek UI
+   ============================================================ */
+:root{
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+body[data-theme="archive"]{
+  --bg:#e7ddc4;
+  --bg-deep:#d8cba9;
+  --ink:#221c12;
+  --ink-soft:#4d4434;
+  --accent:#8e2f2f;
+  --accent-soft:#a8493f;
+  --card:#efe7d2;
+  --card-back:#1f1a12;
+  --card-back-ink:#e7ddc4;
+  --line:#9a8a64;
+  --display-font:'Special Elite', monospace;
+  --body-font:'EB Garamond', serif;
+  --radius:4px;
+  --shadow:0 10px 30px rgba(34,28,18,.25);
+  --grain-opacity:.5;
+}
+body[data-theme="modern"]{
+  --bg:#0d1016;
+  --bg-deep:#070a0f;
+  --ink:#f2f4f8;
+  --ink-soft:#9aa3b2;
+  --accent:#ff5252;
+  --accent-soft:#ff8a80;
+  --card:#161b24;
+  --card-back:#1d2430;
+  --card-back-ink:#f2f4f8;
+  --line:#2b3442;
+  --display-font:'Inter', sans-serif;
+  --body-font:'Inter', sans-serif;
+  --radius:18px;
+  --shadow:0 14px 40px rgba(0,0,0,.5);
+  --grain-opacity:0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body-font);
+  font-size:18px;
+  line-height:1.65;
+  overflow-x:hidden;
+  transition:background .8s var(--ease), color .8s var(--ease);
+}
+
+/* paper grain for archive theme */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:1;
+  opacity:var(--grain-opacity);
+  transition:opacity .8s;
+  background-image:
+    radial-gradient(rgba(80,60,30,.06) 1px, transparent 1.4px),
+    radial-gradient(rgba(40,30,15,.05) 1px, transparent 1.2px);
+  background-size:7px 7px, 11px 11px;
+  background-position:0 0, 4px 6px;
+  mix-blend-mode:multiply;
+}
+
+/* falling snow / ash canvas */
+#particles{
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:2;
+}
+
+/* ====================== TOP BAR ====================== */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+  padding:14px 24px;
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  transition:background .8s, border-color .8s;
+}
+.brand{
+  font-family:var(--display-font);
+  font-size:1.05rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.brand span{color:var(--accent)}
+.theme-toggle{
+  display:flex;align-items:center;gap:10px;
+  font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);
+  user-select:none;
+}
+.switch{
+  position:relative;width:64px;height:30px;
+  background:var(--card-back);
+  border-radius:999px;
+  cursor:pointer;
+  border:1px solid var(--line);
+  transition:background .5s;
+  flex-shrink:0;
+}
+.switch::after{
+  content:"";
+  position:absolute;top:3px;left:4px;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--accent);
+  transition:transform .45s var(--ease), background .5s;
+}
+body[data-theme="modern"] .switch::after{transform:translateX(33px)}
+.toggle-label{transition:opacity .4s}
+body[data-theme="archive"] .label-modern{opacity:.35}
+body[data-theme="modern"] .label-film{opacity:.35}
+
+/* ====================== HERO ====================== */
+.hero{
+  position:relative;
+  min-height:88vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 8vw 60px;
+  z-index:3;
+}
+.eyebrow{
+  font-family:var(--display-font);
+  font-size:.8rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:18px;
+  opacity:0;
+  animation:rise .9s var(--ease) .2s forwards;
+}
+.hero h1{
+  font-family:var(--display-font);
+  font-size:clamp(2.6rem, 7.5vw, 6rem);
+  line-height:1.04;
+  letter-spacing:.01em;
+  max-width:14ch;
+  opacity:0;
+  animation:rise 1s var(--ease) .4s forwards;
+}
+.hero h1 em{
+  font-style:normal;
+  color:var(--accent);
+}
+.hero p{
+  margin-top:26px;
+  max-width:54ch;
+  font-size:1.15rem;
+  color:var(--ink-soft);
+  opacity:0;
+  animation:rise 1s var(--ease) .65s forwards;
+}
+.hero .narrator{
+  margin-top:34px;
+  font-family:var(--display-font);
+  font-size:.85rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  opacity:0;
+  animation:rise 1s var(--ease) .85s forwards;
+}
+@keyframes rise{
+  from{opacity:0;transform:translateY(26px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ====================== SECTIONS ====================== */
+section{
+  position:relative;
+  z-index:3;
+  padding:90px 8vw;
+}
+.sec-head{
+  display:flex;align-items:baseline;gap:18px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.sec-head h2{
+  font-family:var(--display-font);
+  font-size:clamp(1.7rem,3.6vw,2.6rem);
+  letter-spacing:.02em;
+}
+.sec-tag{
+  font-family:var(--display-font);
+  font-size:.72rem;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--accent);
+  padding:4px 12px;
+  border-radius:2px;
+}
+.sec-sub{
+  color:var(--ink-soft);
+  max-width:62ch;
+  margin-bottom:46px;
+}
+
+/* ====================== CAST GRID ====================== */
+.cast-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(250px,1fr));
+  gap:26px;
+}
+.cast-card{
+  perspective:1400px;
+  height:360px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(34px);
+  transition:opacity .8s var(--ease), transform .8s var(--ease);
+}
+.cast-card.in-view{opacity:1;transform:translateY(0)}
+.card-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .85s var(--ease);
+}
+.cast-card.revealed .card-inner{transform:rotateY(180deg)}
+.card-face{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:26px;
+  overflow:hidden;
+  transition:border-radius .8s;
+}
+.card-front{background:var(--card)}
+.card-front::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(160deg, transparent 55%, color-mix(in srgb, var(--accent) 14%, transparent));
+}
+.card-front .char-initial{
+  position:absolute;top:14px;right:20px;
+  font-family:var(--display-font);
+  font-size:5.2rem;
+  color:color-mix(in srgb, var(--ink) 10%, transparent);
+  line-height:1;
+}
+.char-name{
+  font-family:var(--display-font);
+  font-size:1.45rem;
+  line-height:1.15;
+  position:relative;
+}
+.char-role{
+  font-size:.95rem;
+  color:var(--ink-soft);
+  margin-top:8px;
+  position:relative;
+}
+.reveal-hint{
+  margin-top:18px;
+  font-family:var(--display-font);
+  font-size:.68rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--accent);
+  display:flex;align-items:center;gap:8px;
+  position:relative;
+}
+.reveal-hint::after{
+  content:"→";
+  transition:transform .4s var(--ease);
+}
+.cast-card:hover .reveal-hint::after{transform:translateX(6px)}
+.cast-card:hover .card-inner{transform:rotateY(8deg)}
+.cast-card.revealed:hover .card-inner{transform:rotateY(180deg)}
+
+.card-back{
+  background:var(--card-back);
+  color:var(--card-back-ink);
+  transform:rotateY(180deg);
+  justify-content:flex-end;
+}
+.actor-photo{
+  position:absolute;inset:0;
+  background-size:cover;
+  background-position:center top;
+  filter:saturate(.92);
+}
+.actor-photo.placeholder{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display-font);
+  font-size:3.4rem;
+  color:color-mix(in srgb, var(--card-back-ink) 25%, transparent);
+  background:linear-gradient(150deg, color-mix(in srgb, var(--accent) 28%, var(--card-back)), var(--card-back));
+}
+.card-back::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.78) 18%, transparent 62%);
+}
+.actor-name,.cast-as{position:relative;z-index:2}
+.actor-name{
+  font-family:var(--display-font);
+  font-size:1.35rem;
+  color:#fff;
+}
+.cast-as{
+  font-size:.85rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--accent-soft);
+  margin-top:6px;
+}
+
+/* ====================== QUOTES ====================== */
+.quotes{background:var(--bg-deep);transition:background .8s}
+.quote-stage{
+  position:relative;
+  min-height:300px;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--card);
+  box-shadow:var(--shadow);
+  padding:60px 7vw;
+  overflow:hidden;
+}
+.quote-stage::before, .quote-stage::after{
+  font-family:var(--display-font);
+  font-size:7rem;
+  color:color-mix(in srgb, var(--accent) 30%, transparent);
+  position:absolute;
+  line-height:1;
+}
+.quote-stage::before{content:"“";top:14px;left:26px}
+.quote-stage::after{content:"”";bottom:-18px;right:26px}
+.quote-text{
+  font-size:clamp(1.3rem, 2.6vw, 1.9rem);
+  font-style:italic;
+  max-width:30ch;
+  transition:opacity .45s var(--ease), transform .45s var(--ease);
+}
+.quote-meta{
+  margin-top:18px;
+  font-family:var(--display-font);
+  font-size:.75rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  transition:opacity .45s var(--ease);
+}
+.quote-stage.switching .quote-text,
+.quote-stage.switching .quote-meta{opacity:0;transform:translateY(12px)}
+.quote-nav{
+  display:flex;justify-content:center;gap:14px;margin-top:30px;
+}
+.qbtn{
+  font-family:var(--display-font);
+  font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:10px 26px;
+  cursor:pointer;
+  transition:all .35s var(--ease);
+}
+.qbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-2px)}
+.quote-dots{display:flex;justify-content:center;gap:8px;margin-top:20px}
+.qdot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--line);
+  transition:all .35s;
+  cursor:pointer;
+}
+.qdot.active{background:var(--accent);transform:scale(1.35)}
+
+/* ====================== DREAM BOARD ====================== */
+.board-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(200px,1fr));
+  grid-auto-rows:130px;
+  gap:18px;
+  margin-bottom:46px;
+}
+.tile{
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:var(--card);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  padding:16px;
+  font-family:var(--display-font);
+  font-size:.95rem;
+  letter-spacing:.04em;
+  background-size:cover;background-position:center;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(28px) rotate(var(--tilt,0deg));
+  transition:opacity .8s var(--ease), transform .8s var(--ease), box-shadow .4s;
+  cursor:default;
+}
+.tile.in-view{opacity:1;transform:translateY(0) rotate(var(--tilt,0deg))}
+.tile:hover{transform:translateY(-6px) rotate(0deg) scale(1.03);box-shadow:0 18px 44px rgba(0,0,0,.35);z-index:4}
+.tile.tall{grid-row:span 2}
+.tile.wide{grid-column:span 2}
+.tile.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tile.dark{background:var(--card-back);color:var(--card-back-ink)}
+.tile .tile-caption{
+  position:absolute;inset:auto 0 0 0;
+  background:rgba(0,0,0,.6);color:#fff;
+  font-size:.72rem;padding:6px 10px;letter-spacing:.08em;
+}
+.board-why{
+  border-left:3px solid var(--accent);
+  padding:8px 0 8px 28px;
+  max-width:70ch;
+}
+.board-why h3{
+  font-family:var(--display-font);
+  font-size:1.1rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.board-why p{color:var(--ink-soft)}
+
+/* ====================== ACTION MOMENTS ====================== */
+.moments{background:var(--bg-deep);transition:background .8s}
+.moment-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+}
+.moment-btn{
+  font-family:var(--display-font);
+  text-align:left;
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:24px;
+  cursor:pointer;
+  transition:transform .35s var(--ease), border-color .35s;
+  position:relative;
+  overflow:hidden;
+}
+.moment-btn:hover{transform:translateY(-5px);border-color:var(--accent)}
+.moment-btn .m-title{font-size:1.05rem;letter-spacing:.04em}
+.moment-btn .m-sub{
+  font-family:var(--body-font);
+  font-size:.88rem;color:var(--ink-soft);margin-top:8px;
+}
+.moment-btn .m-go{
+  margin-top:16px;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);
+}
+.moment-note{
+  margin-top:26px;font-size:.9rem;color:var(--ink-soft);font-style:italic;
+}
+
+/* full-screen effects layer */
+#fxLayer{
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:100;
+}
+.flash{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at var(--fx,50%) 70%, rgba(255,176,84,.95), rgba(180,52,28,.55) 40%, transparent 72%);
+  opacity:0;
+}
+.flash.go{animation:flashAnim 1.5s ease-out forwards}
+@keyframes flashAnim{
+  0%{opacity:0}
+  6%{opacity:1}
+  18%{opacity:.45}
+  26%{opacity:.85}
+  100%{opacity:0}
+}
+.searchlight{
+  position:absolute;inset:-20%;
+  background:conic-gradient(from 0deg at 50% 120%, transparent 0deg, rgba(255,255,230,.18) 6deg, transparent 14deg);
+  opacity:0;
+}
+.searchlight.go{animation:sweep 4s ease-in-out forwards}
+@keyframes sweep{
+  0%{opacity:0;transform:rotate(-30deg)}
+  15%{opacity:1}
+  85%{opacity:1}
+  100%{opacity:0;transform:rotate(30deg)}
+}
+body.shaking{animation:shake .8s ease-in-out}
+@keyframes shake{
+  0%,100%{transform:translate(0,0)}
+  12%{transform:translate(-7px,4px)}
+  24%{transform:translate(8px,-5px)}
+  36%{transform:translate(-6px,-4px)}
+  48%{transform:translate(6px,5px)}
+  60%{transform:translate(-4px,2px)}
+  75%{transform:translate(3px,-2px)}
+  88%{transform:translate(-2px,1px)}
+}
+.ember{
+  position:absolute;
+  width:5px;height:5px;border-radius:50%;
+  background:#ffb054;
+  box-shadow:0 0 10px 2px rgba(255,140,40,.8);
+}
+
+/* ====================== FOOTER ====================== */
+footer{
+  position:relative;z-index:3;
+  padding:60px 8vw;
+  border-top:1px solid var(--line);
+  text-align:center;
+  font-family:var(--display-font);
+  font-size:.78rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+@media (max-width:640px){
+  section{padding:64px 6vw}
+  .cast-card{height:330px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .hero h1,.hero p,.eyebrow,.hero .narrator{opacity:1;transform:none}
+  .cast-card,.tile{opacity:1;transform:none}
+}
+</style>
+</head>
+<body data-theme="archive">
+
+<canvas id="particles"></canvas>
+<div id="fxLayer">
+  <div class="searchlight" id="searchlight"></div>
+  <div class="flash" id="flash"></div>
+</div>
+
+<!-- ====================== TOP BAR ====================== -->
+<header class="topbar">
+  <div class="brand">The Book <span>Thief</span> · Casting</div>
+  <div class="theme-toggle">
+    <span class="toggle-label label-film">1942 Film</span>
+    <div class="switch" id="themeSwitch" role="switch" aria-label="Toggle theme" tabindex="0"></div>
+    <span class="toggle-label label-modern">Modern</span>
+  </div>
+</header>
+
+<!-- ====================== HERO ====================== -->
+<div class="hero">
+  <div class="eyebrow">A literature project · Himmel Street, Molching</div>
+  <h1>If <em>The Book Thief</em> were a film, here is my cast.</h1>
+  <p>
+    A casting board, a collection of Liesel's words, and a dream collage —
+    built from a story about how words can be stolen, hidden, painted over,
+    and given back.
+  </p>
+  <div class="narrator">*** Narrated, as always, by Death ***</div>
+</div>
+
+<!-- ====================== CAST ====================== -->
+<section id="cast">
+  <div class="sec-head">
+    <h2>The Cast</h2>
+    <span class="sec-tag">Click a card to reveal</span>
+  </div>
+  <p class="sec-sub">
+    Each card holds a character from Himmel Street. Click to turn the card
+    over and see who I would cast in the role.
+  </p>
+  <div class="cast-grid" id="castGrid"></div>
+</section>
+
+<!-- ====================== QUOTES ====================== -->
+<section class="quotes" id="quotes">
+  <div class="sec-head">
+    <h2>Liesel's Words</h2>
+    <span class="sec-tag">Quotes</span>
+  </div>
+  <p class="sec-sub">
+    The lines that define the book thief herself.
+  </p>
+  <div class="quote-stage" id="quoteStage">
+    <div>
+      <div class="quote-text" id="quoteText"></div>
+      <div class="quote-meta" id="quoteMeta"></div>
+    </div>
+  </div>
+  <div class="quote-nav">
+    <button class="qbtn" id="prevQuote">← Previous</button>
+    <button class="qbtn" id="nextQuote">Next →</button>
+  </div>
+  <div class="quote-dots" id="quoteDots"></div>
+</section>
+
+<!-- ====================== DREAM BOARD ====================== -->
+<section id="board">
+  <div class="sec-head">
+    <h2>Dream Board</h2>
+    <span class="sec-tag">Collage</span>
+  </div>
+  <p class="sec-sub">
+    A collage of the images, colors, and objects that make up the world of
+    the novel. Hover over the tiles.
+  </p>
+  <div class="board-grid" id="boardGrid"></div>
+  <div class="board-why">
+    <h3>Why these pieces</h3>
+    <p id="boardWhy"></p>
+  </div>
+</section>
+
+<!-- ====================== ACTION MOMENTS ====================== -->
+<section class="moments" id="moments">
+  <div class="sec-head">
+    <h2>Action Moments</h2>
+    <span class="sec-tag">Press to experience</span>
+  </div>
+  <p class="sec-sub">
+    The novel's most intense scenes. Press one and the page itself reacts —
+    sky flash, tremor, embers, searchlights.
+  </p>
+  <div class="moment-row" id="momentRow"></div>
+  <p class="moment-note">
+    These effects are kept somber on purpose — in the book, the bombs are never exciting. Death simply collects.
+  </p>
+</section>
+
+<footer>
+  *** A project for English / Literature · The Book Thief by Markus Zusak ***
+</footer>
+
+<script>
+/* =====================================================================
+   EDIT YOUR CONTENT HERE 👇 — this is the only part you need to change
+   ===================================================================== */
+const CAST = [
+  // photo: paste an image URL between the quotes, e.g. photo:"https://..."
+  { character:"Liesel Meminger",  role:"The book thief",                 actor:"Your actor here", photo:"" },
+  { character:"Hans Hubermann",   role:"Papa · the accordionist",        actor:"Your actor here", photo:"" },
+  { character:"Rosa Hubermann",   role:"Mama · the thunderstorm",        actor:"Your actor here", photo:"" },
+  { character:"Rudy Steiner",     role:"The boy with hair like lemons",  actor:"Your actor here", photo:"" },
+  { character:"Max Vandenburg",   role:"The hidden fist-fighter",        actor:"Your actor here", photo:"" },
+  { character:"Death",            role:"The narrator",                   actor:"Your actor here", photo:"" },
+  { character:"Ilsa Hermann",     role:"The mayor's wife · the library", actor:"Your actor here", photo:"" },
+  { character:"Frau Holtzapfel",  role:"The neighbor",                   actor:"Your actor here", photo:"" },
+];
+
+const QUOTES = [
+  { text:"Paste your first Liesel quote here.",  source:"Part / chapter goes here" },
+  { text:"Paste your second quote here.",        source:"Part / chapter goes here" },
+  { text:"Paste your third quote here.",         source:"Part / chapter goes here" },
+];
+
+const BOARD_TILES = [
+  // type: "text" (word tile), "image" (needs img URL), styles: "", "accent", "dark", sizes: "", "tall", "wide"
+  { type:"text",  label:"❄ Snow on Himmel Street",  style:"dark",   size:"wide" },
+  { type:"text",  label:"📖 A stolen book",          style:"accent", size:"" },
+  { type:"image", img:"", caption:"Add your image",  style:"",       size:"tall" },
+  { type:"text",  label:"🪗 Papa's accordion",       style:"",       size:"" },
+  { type:"text",  label:"🥊 Max's fists",            style:"dark",   size:"" },
+  { type:"image", img:"", caption:"Add your image",  style:"",       size:"" },
+  { type:"text",  label:"🍋 Hair the color of lemons",style:"accent",size:"" },
+  { type:"text",  label:"✊ Painted-over pages",     style:"",       size:"wide" },
+  { type:"image", img:"", caption:"Add your image",  style:"",       size:"" },
+  { type:"text",  label:"🕯 The basement",           style:"dark",   size:"" },
+];
+
+const BOARD_EXPLANATION =
+  "Paste your explanation here — why you chose these images and words, and what they say about the novel's themes (the power of words, love and loss on Himmel Street, color, Death's perspective).";
+
+const MOMENTS = [
+  { title:"Air raid over Molching", sub:"The sirens sound and Himmel Street goes underground.", fx:"raid" },
+  { title:"The bombing of Himmel Street", sub:"The sky breaks open while the street sleeps.", fx:"bomb" },
+  { title:"The parade on Munich Street", sub:"Hans steps forward with a piece of bread.", fx:"sweep" },
+  { title:"The book burning", sub:"A fire in the town square — and a book saved from it.", fx:"embers" },
+];
+/* ============================== end of editable content ============================== */
+
+
+/* ---------- theme toggle ---------- */
+const sw = document.getElementById('themeSwitch');
+function toggleTheme(){
+  const b = document.body;
+  b.dataset.theme = b.dataset.theme === 'archive' ? 'modern' : 'archive';
+}
+sw.addEventListener('click', toggleTheme);
+sw.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleTheme();} });
+
+/* ---------- build cast cards ---------- */
+const grid = document.getElementById('castGrid');
+CAST.forEach((c,i)=>{
+  const card = document.createElement('div');
+  card.className = 'cast-card';
+  card.style.transitionDelay = (i%4)*0.08 + 's';
+  card.setAttribute('tabindex','0');
+  card.setAttribute('role','button');
+  card.setAttribute('aria-label','Reveal casting for '+c.character);
+  const photoStyle = c.photo ? `style="background-image:url('${c.photo}')"` : '';
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-face card-front">
+        <div class="char-initial">${c.character.charAt(0)}</div>
+        <div class="char-name">${c.character}</div>
+        <div class="char-role">${c.role}</div>
+        <div class="reveal-hint">Click to reveal</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="actor-photo ${c.photo?'':'placeholder'}" ${photoStyle}>${c.photo?'':'?'}</div>
+        <div class="actor-name">${c.actor}</div>
+        <div class="cast-as">as ${c.character}</div>
+      </div>
+    </div>`;
+  const flip = ()=>card.classList.toggle('revealed');
+  card.addEventListener('click', flip);
+  card.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();flip();} });
+  grid.appendChild(card);
+});
+
+/* ---------- quotes carousel ---------- */
+let qi = 0;
+const qText = document.getElementById('quoteText');
+const qMeta = document.getElementById('quoteMeta');
+const qStage = document.getElementById('quoteStage');
+const qDots = document.getElementById('quoteDots');
+QUOTES.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'qdot' + (i===0?' active':'');
+  d.addEventListener('click', ()=>showQuote(i));
+  qDots.appendChild(d);
+});
+function renderQuote(){
+  qText.textContent = QUOTES[qi].text;
+  qMeta.textContent = QUOTES[qi].source;
+  [...qDots.children].forEach((d,i)=>d.classList.toggle('active', i===qi));
+}
+function showQuote(n){
+  qStage.classList.add('switching');
+  setTimeout(()=>{
+    qi = (n + QUOTES.length) % QUOTES.length;
+    renderQuote();
+    qStage.classList.remove('switching');
+  }, 420);
+}
+document.getElementById('prevQuote').addEventListener('click',()=>showQuote(qi-1));
+document.getElementById('nextQuote').addEventListener('click',()=>showQuote(qi+1));
+renderQuote();
+
+/* ---------- dream board ---------- */
+const bGrid = document.getElementById('boardGrid');
+BOARD_TILES.forEach((t,i)=>{
+  const tile = document.createElement('div');
+  tile.className = `tile ${t.style||''} ${t.size||''}`.trim();
+  tile.style.setProperty('--tilt', ((i%3)-1)*1.4 + 'deg');
+  tile.style.transitionDelay = (i%5)*0.07 + 's';
+  if(t.type==='image'){
+    if(t.img){ tile.style.backgroundImage = `url('${t.img}')`; tile.innerHTML = `<span class="tile-caption">${t.caption||''}</span>`; }
+    else { tile.textContent = '🖼 ' + (t.caption || 'Add your image'); }
+  } else {
+    tile.textContent = t.label;
+  }
+  bGrid.appendChild(tile);
+});
+document.getElementById('boardWhy').textContent = BOARD_EXPLANATION;
+
+/* ---------- scroll reveal ---------- */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target);} });
+},{threshold:.15});
+document.querySelectorAll('.cast-card,.tile').forEach(el=>io.observe(el));
+
+/* ---------- particles: snow (archive) / dust (modern) ---------- */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W,H,flakes=[];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function sizeCanvas(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+sizeCanvas(); addEventListener('resize', sizeCanvas);
+function makeFlakes(){
+  flakes = Array.from({length: reduceMotion?0:70}, ()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    r:Math.random()*2.2+0.6,
+    vy:Math.random()*0.5+0.25,
+    vx:Math.random()*0.35-0.17,
+    o:Math.random()*0.5+0.25
+  }));
+}
+makeFlakes();
+function drawParticles(){
+  ctx.clearRect(0,0,W,H);
+  const modern = document.body.dataset.theme==='modern';
+  flakes.forEach(f=>{
+    f.y += f.vy; f.x += f.vx + Math.sin(f.y*0.01)*0.15;
+    if(f.y>H+5){f.y=-5; f.x=Math.random()*W;}
+    if(f.x>W+5)f.x=-5; if(f.x<-5)f.x=W+5;
+    ctx.beginPath();
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+    ctx.fillStyle = modern
+      ? `rgba(255,82,82,${f.o*0.35})`
+      : `rgba(250,247,238,${f.o})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ---------- action moment effects ---------- */
+const flash = document.getElementById('flash');
+const light = document.getElementById('searchlight');
+const fxLayer = document.getElementById('fxLayer');
+
+function burstEmbers(n, originX){
+  for(let i=0;i<n;i++){
+    const e = document.createElement('div');
+    e.className='ember';
+    const x = originX + (Math.random()*240-120);
+    e.style.left = x+'px';
+    e.style.top = (H-10)+'px';
+    fxLayer.appendChild(e);
+    const dx = (Math.random()*2-1)*160;
+    const dy = -(Math.random()*H*0.7 + H*0.2);
+    const dur = 1400 + Math.random()*1400;
+    e.animate([
+      {transform:'translate(0,0) scale(1)', opacity:1},
+      {transform:`translate(${dx}px,${dy}px) scale(.2)`, opacity:0}
+    ],{duration:dur, easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish = ()=>e.remove();
+  }
+}
+function doFlash(xPct){
+  flash.style.setProperty('--fx', xPct+'%');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+}
+function doShake(){
+  if(reduceMotion) return;
+  document.body.classList.remove('shaking'); void document.body.offsetWidth;
+  document.body.classList.add('shaking');
+}
+function doSweep(){
+  light.classList.remove('go'); void light.offsetWidth; light.classList.add('go');
+}
+const FX = {
+  raid(){ doSweep(); setTimeout(()=>{doFlash(25); doShake(); burstEmbers(26, W*0.3);}, 900);
+          setTimeout(()=>{doFlash(70); burstEmbers(18, W*0.7);}, 1900); },
+  bomb(){ doFlash(50); doShake(); burstEmbers(48, W*0.5);
+          setTimeout(()=>{doFlash(30); doShake(); burstEmbers(26, W*0.32);}, 750);
+          setTimeout(()=>{doFlash(75); burstEmbers(20, W*0.74);}, 1450); },
+  sweep(){ doSweep(); },
+  embers(){ burstEmbers(70, W*0.5); doFlash(50); },
+};
+
+const mRow = document.getElementById('momentRow');
+MOMENTS.forEach(m=>{
+  const b = document.createElement('button');
+  b.className='moment-btn';
+  b.innerHTML = `<div class="m-title">${m.title}</div><div class="m-sub">${m.sub}</div><div class="m-go">▶ Press</div>`;
+  b.addEventListener('click', ()=>FX[m.fx]&&FX[m.fx]());
+  mRow.appendChild(b);
+});
+</script>
+</body>
+</html>
